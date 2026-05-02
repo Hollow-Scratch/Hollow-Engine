@@ -1,6 +1,7 @@
 #include "Application.hpp"
 #include "Engine/Core/Window.hpp"
 #include "Input.hpp"
+#include "Time.hpp"
 
 namespace Hollow {
 
@@ -8,12 +9,15 @@ namespace Hollow {
 
 	void Application::Run() {
 		m_Window = Window::Create();
+
+		Time::Init();
 		OnInit();
 
 		while (m_Running && !m_Window->ShouldClose()) {
-			m_Window->OnUpdate();
+			Time::Update();
 			Input::Update();
-			OnUpdate();
+			OnUpdate(Time::GetDeltaTime());
+			m_Window->OnUpdate();
 		}
 
 		OnShutdown();

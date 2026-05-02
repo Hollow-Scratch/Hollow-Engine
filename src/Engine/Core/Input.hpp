@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core.hpp"
 #include "KeyCodes.hpp"
 #include "MouseCodes.hpp"
 #include <unordered_map>
@@ -11,7 +12,7 @@ namespace Hollow {
 		float Y;
 	};
 
-	class Input {
+	class HOLLOW_API Input {
 	      public:
 		static bool IsKeyPressed(KeyCode key);	// held
 		static bool IsKeyDown(KeyCode key);	// pressed once

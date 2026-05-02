@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core.hpp"
+
 #include <cstdint>
 #include <functional>
 #include <memory>
@@ -16,7 +18,7 @@ namespace Hollow {
 		bool VSync{true};
 	};
 
-	class Window {
+	class HOLLOW_API Window {
 	      public:
 		using EventCallbackFn =
 		    std::function<void(int)>; // Placeholder for actual event type

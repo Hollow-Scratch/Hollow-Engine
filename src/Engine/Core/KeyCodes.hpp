@@ -1,9 +1,10 @@
 #pragma once
+
 #include <cstdint>
 
 namespace Hollow {
 
-	enum class KeyCode : uint16_t {
+	enum class KeyCode : uint8_t {
 		Unknown = 0,
 
 		// Letters

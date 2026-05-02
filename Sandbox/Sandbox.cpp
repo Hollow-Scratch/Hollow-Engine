@@ -12,7 +12,7 @@ namespace Hollow {
 			// init
 		}
 
-		void OnUpdate() override {
+		void OnUpdate(float deltaTime) override {
 			// update
 			if (Input::IsKeyPressed(KeyCode::Escape)) {
 				Close();

@@ -1,11 +1,14 @@
 #pragma once
+
+#include "Core.hpp"
+
 #include <memory>
 
 namespace Hollow {
 
 	class Window;
 
-	class Application {
+	class HOLLOW_API Application {
 	      public:
 		Application() = default;
 		virtual ~Application();
@@ -15,7 +18,7 @@ namespace Hollow {
 
 	      protected:
 		virtual void OnInit() = 0;
-		virtual void OnUpdate() = 0;
+		virtual void OnUpdate(float deltaTime) = 0;
 		virtual void OnShutdown() = 0;
 
 	      private:

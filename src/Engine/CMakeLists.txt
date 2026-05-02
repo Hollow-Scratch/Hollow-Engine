@@ -2,7 +2,7 @@ file(GLOB_RECURSE ENGINE_SOURCES CONFIGURE_DEPENDS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
 )
 
-add_library(HollowEngine
+add_library(HollowEngine SHARED
     ${ENGINE_SOURCES}
     ${CMAKE_SOURCE_DIR}/external/glad/src/glad.c
 )
@@ -29,5 +29,7 @@ if(CLANG_TIDY_EXE)
         "${CLANG_TIDY_EXE};-header-filter=src/.*;-extra-arg=-std=c++23"
     )
 endif()
+
+target_compile_definitions(HollowEngine PRIVATE HOLLOW_BUILD_DLL)
 
 message(STATUS "HollowEngine sources: ${ENGINE_SOURCES}")
