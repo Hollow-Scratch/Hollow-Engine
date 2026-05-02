@@ -1,6 +1,7 @@
 #include "GLFWWindow.hpp"
 #include "Engine/Core/Input.hpp"
-#include <GLFW/glfw3.h>
+
+#include <iostream>
 #include <stdexcept>
 
 namespace Hollow {
@@ -24,6 +25,12 @@ namespace Hollow {
 			if (glfwInit() == 0) {
 				throw std::runtime_error("Failed to init GLFW");
 			}
+
+			// Request OpenGL 4.6 Core
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+			glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+			glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 			s_GLFWInitialized = true;
 		}
 
@@ -36,6 +43,17 @@ namespace Hollow {
 		}
 
 		glfwMakeContextCurrent(m_Window);
+
+		if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress)) {
+			throw std::runtime_error("Failed to initialize GLAD");
+		}
+
+		const GLubyte *version = glGetString(GL_VERSION);
+		if (!version) {
+			throw std::runtime_error("Failed to get OpenGL version");
+		}
+
+		std::cout << "OpenGL Version: " << version << std::endl;
 
 		Input::SetNativeWindow(m_Window);
 
