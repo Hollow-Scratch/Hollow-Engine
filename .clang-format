@@ -1,0 +1,21 @@
+BasedOnStyle: LLVM
+
+# Indentation
+UseTab: Always
+IndentWidth: 8
+TabWidth: 8
+
+# Braces
+BreakBeforeBraces: Attach
+
+# Prevent mixed formatting
+AllowShortBlocksOnASingleLine: Never
+AllowShortFunctionsOnASingleLine: None
+AllowShortIfStatementsOnASingleLine: false
+
+# Keep it readable
+ColumnLimit: 100
+
+# Ensure consistent indentation
+IndentCaseLabels: true
+NamespaceIndentation: All
