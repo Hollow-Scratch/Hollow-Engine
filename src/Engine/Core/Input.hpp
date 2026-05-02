@@ -1,10 +1,10 @@
 #pragma once
-#include <cstdint>
+
+#include "KeyCodes.hpp"
+#include "MouseCodes.hpp"
+#include <unordered_map>
 
 namespace Hollow {
-
-	using KeyCode = int;
-	using MouseButton = int;
 
 	struct MousePosition {
 		float X;
@@ -12,15 +12,24 @@ namespace Hollow {
 	};
 
 	class Input {
-	public:
-		[[nodiscard]] static bool IsKeyPressed(KeyCode keycode);
-		[[nodiscard]] static bool IsMouseButtonPressed(MouseButton button);
+	      public:
+		static bool IsKeyPressed(KeyCode key);	// held
+		static bool IsKeyDown(KeyCode key);	// pressed once
+		static bool IsKeyReleased(KeyCode key); // released once
 
-		[[nodiscard]] static MousePosition GetMousePosition();
-		[[nodiscard]] static float GetMouseX();
-		[[nodiscard]] static float GetMouseY();
+		static bool IsMouseButtonPressed(MouseButton button);
 
-		static void SetNativeWindow(void* window);
+		static MousePosition GetMousePosition();
+		static float GetMouseX();
+		static float GetMouseY();
+
+		static void SetNativeWindow(void *window);
+
+		static void Update();
+
+	      private:
+		static std::unordered_map<KeyCode, bool> s_CurrentKeys;
+		static std::unordered_map<KeyCode, bool> s_PreviousKeys;
 	};
 
 } // namespace Hollow

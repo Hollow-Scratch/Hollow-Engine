@@ -1,5 +1,6 @@
 #include "Application.hpp"
 #include "Engine/Core/Window.hpp"
+#include "Input.hpp"
 
 namespace Hollow {
 
@@ -11,6 +12,7 @@ namespace Hollow {
 
 		while (m_Running && !m_Window->ShouldClose()) {
 			m_Window->OnUpdate();
+			Input::Update();
 			OnUpdate();
 		}
 
