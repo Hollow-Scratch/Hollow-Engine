@@ -19,3 +19,6 @@ ColumnLimit: 100
 # Ensure consistent indentation
 IndentCaseLabels: true
 NamespaceIndentation: All
+
+SortIncludes: Never
+IncludeBlocks: Preserve

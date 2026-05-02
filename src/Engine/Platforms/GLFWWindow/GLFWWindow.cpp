@@ -53,7 +53,7 @@ namespace Hollow {
 			throw std::runtime_error("Failed to get OpenGL version");
 		}
 
-		std::cout << "OpenGL Version: " << version << std::endl;
+		std::cout << "OpenGL Version: " << version << "\n";
 
 		Input::SetNativeWindow(m_Window);
 
