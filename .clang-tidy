@@ -1,13 +1,4 @@
 Checks: >
   clang-analyzer-*,
   bugprone-*,
-  modernize-*,
-  -modernize-use-trailing-return-type,
-  performance-*,
-  readability-*
-
-WarningsAsErrors: ""
-
-HeaderFilterRegex: ".*"
-
-FormatStyle: file
+  performance-*

@@ -1,18 +1,24 @@
-#include "Application.h"
+#include "Application.hpp"
+#include "Engine/Core/Window.hpp"
 
 namespace Hollow {
 
+	Application::~Application() = default;
+
 	void Application::Run() {
-		// Initialize once
+		m_Window = Window::Create();
 		OnInit();
 
-		// Main loop
-		while (m_Running) {
+		while (m_Running && !m_Window->ShouldClose()) {
+			m_Window->OnUpdate();
 			OnUpdate();
 		}
 
-		// Cleanup
 		OnShutdown();
+	}
+
+	void Application::Close() {
+		m_Running = false;
 	}
 
 } // namespace Hollow
