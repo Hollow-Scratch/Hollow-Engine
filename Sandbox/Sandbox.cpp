@@ -1,76 +1,127 @@
 #include "Engine/Hollow.hpp"
 
+#include <glad/glad.h>
+#include <GLFW/glfw3.h>
+
 #include <iostream>
 #include <memory>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 namespace Hollow {
 
 	class Sandbox : public Application {
 	      protected:
-		Registry registry;
-		Entity player = INVALID_ENTITY;
-
-		// Movement system (position update)
-		void MovementSystem(float dt) {
-			auto &transforms = registry.view<Transform>();
-			auto &velocities = registry.view<Velocity>();
-
-			for (auto &[entity, t] : transforms) {
-				if (!registry.has<Velocity>(entity))
-					continue;
-
-				auto &v = velocities[entity];
-
-				t.x += v.vx * dt;
-				t.y += v.vy * dt;
-			}
-		}
+		unsigned int VAO, VBO;
+		unsigned int shader;
 
 		void OnInit() override {
-			std::cout << "OnInit called\n";
+			std::cout << "3D Renderer Init\n";
 
-			player = registry.create();
+			glEnable(GL_DEPTH_TEST);
 
-			registry.add(player, Transform{0.0f, 0.0f});
-			registry.add(player, Velocity{10.0f, 0.0f});
+			const char *vs = R"(
+			#version 460 core
+			layout(location = 0) in vec3 aPos;
+
+			uniform mat4 u_Model;
+			uniform mat4 u_View;
+			uniform mat4 u_Projection;
+
+			void main() {
+				gl_Position = u_Projection * u_View * u_Model * vec4(aPos, 1.0);
+			}
+		)";
+
+			const char *fs = R"(
+			#version 460 core
+			out vec4 FragColor;
+			void main() {
+				FragColor = vec4(1.0, 0.3, 0.3, 1.0);
+			}
+		)";
+
+			unsigned int vertex = glCreateShader(GL_VERTEX_SHADER);
+			glShaderSource(vertex, 1, &vs, nullptr);
+			glCompileShader(vertex);
+
+			unsigned int fragment = glCreateShader(GL_FRAGMENT_SHADER);
+			glShaderSource(fragment, 1, &fs, nullptr);
+			glCompileShader(fragment);
+
+			shader = glCreateProgram();
+			glAttachShader(shader, vertex);
+			glAttachShader(shader, fragment);
+			glLinkProgram(shader);
+
+			glDeleteShader(vertex);
+			glDeleteShader(fragment);
+
+			float vertices[] = {
+			    -0.5f, -0.5f, -0.5f, 0.5f,	-0.5f, -0.5f, 0.5f,  0.5f,  -0.5f,
+			    0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f,
+
+			    -0.5f, -0.5f, 0.5f,	 0.5f,	-0.5f, 0.5f,  0.5f,  0.5f,  0.5f,
+			    0.5f,  0.5f,  0.5f,	 -0.5f, 0.5f,  0.5f,  -0.5f, -0.5f, 0.5f,
+
+			    -0.5f, 0.5f,  0.5f,	 -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f, -0.5f,
+			    -0.5f, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,  0.5f,
+
+			    0.5f,  0.5f,  0.5f,	 0.5f,	0.5f,  -0.5f, 0.5f,  -0.5f, -0.5f,
+			    0.5f,  -0.5f, -0.5f, 0.5f,	-0.5f, 0.5f,  0.5f,  0.5f,  0.5f,
+
+			    -0.5f, -0.5f, -0.5f, 0.5f,	-0.5f, -0.5f, 0.5f,  -0.5f, 0.5f,
+			    0.5f,  -0.5f, 0.5f,	 -0.5f, -0.5f, 0.5f,  -0.5f, -0.5f, -0.5f,
+
+			    -0.5f, 0.5f,  -0.5f, 0.5f,	0.5f,  -0.5f, 0.5f,  0.5f,  0.5f,
+			    0.5f,  0.5f,  0.5f,	 -0.5f, 0.5f,  0.5f,  -0.5f, 0.5f,  -0.5f};
+
+			glCreateVertexArrays(1, &VAO);
+			glCreateBuffers(1, &VBO);
+
+			glNamedBufferData(VBO, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+			glVertexArrayVertexBuffer(VAO, 0, VBO, 0, 3 * sizeof(float));
+			glEnableVertexArrayAttrib(VAO, 0);
+			glVertexArrayAttribFormat(VAO, 0, 3, GL_FLOAT, GL_FALSE, 0);
+			glVertexArrayAttribBinding(VAO, 0, 0);
 		}
 
-		void OnUpdate(float deltaTime) override {
-			auto &v = registry.get<Velocity>(player);
+		void OnUpdate(float dt) override {
+			glClearColor(0.1f, 0.1f, 0.15f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-			float speed = 100.0f;
+			glUseProgram(shader);
 
-			// reset every frame (correct)
-			v.vx = 0.0f;
-			v.vy = 0.0f;
+			glm::mat4 view =
+			    glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
 
-			// continuous input
-			if (Input::IsKeyPressed(KeyCode::Left))
-				v.vx = -speed;
+			glm::mat4 projection =
+			    glm::perspective(glm::radians(45.0f), 1280.0f / 720.0f, 0.1f, 100.0f);
 
-			if (Input::IsKeyPressed(KeyCode::Right))
-				v.vx = speed;
+			glm::mat4 model = glm::rotate(glm::mat4(1.0f), (float)glfwGetTime(),
+						      glm::vec3(0.5f, 1.0f, 0.0f));
 
-			if (Input::IsKeyPressed(KeyCode::Up))
-				v.vy = speed;
+			glUniformMatrix4fv(glGetUniformLocation(shader, "u_Model"), 1, GL_FALSE,
+					   glm::value_ptr(model));
 
-			if (Input::IsKeyPressed(KeyCode::Down))
-				v.vy = -speed;
+			glUniformMatrix4fv(glGetUniformLocation(shader, "u_View"), 1, GL_FALSE,
+					   glm::value_ptr(view));
 
-			MovementSystem(deltaTime);
+			glUniformMatrix4fv(glGetUniformLocation(shader, "u_Projection"), 1,
+					   GL_FALSE, glm::value_ptr(projection));
 
-			// Debug output
-			auto &t = registry.get<Transform>(player);
-			std::cout << "Pos: " << t.x << ", " << t.y << "\n";
-
-			// Exit
-			if (Input::IsKeyPressed(KeyCode::Escape)) {
-				Close();
-			}
+			glBindVertexArray(VAO);
+			glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 		void OnShutdown() override {
-			std::cout << "Shutdown\n";
+			glDeleteVertexArrays(1, &VAO);
+			glDeleteBuffers(1, &VBO);
+			glDeleteProgram(shader);
+			std::cout << "Renderer Shutdown\n";
 		}
 	};
 

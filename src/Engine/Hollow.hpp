@@ -6,8 +6,10 @@
 #include "Core/MouseCodes.hpp"
 #include "Core/Window.hpp"
 
-#include "ECS/Registry.hpp"
-#include "ECS/Components.hpp"
-#include "ECS/Entity.hpp"
+#include "Ecs/Registry.hpp"
+#include "Ecs/Components.hpp"
+#include "Ecs/Entity.hpp"
+
+#include "Math/Math.hpp"
 
 #include "EntryPoint.hpp"
