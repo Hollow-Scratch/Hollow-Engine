@@ -16,6 +16,7 @@ namespace Hollow {
 		while (m_Running && !m_Window->ShouldClose()) {
 			Time::Update();
 			Input::Update();
+
 			OnUpdate(Time::GetDeltaTime());
 			m_Window->OnUpdate();
 		}
