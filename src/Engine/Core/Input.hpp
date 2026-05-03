@@ -3,7 +3,6 @@
 #include "Core.hpp"
 #include "KeyCodes.hpp"
 #include "MouseCodes.hpp"
-#include <unordered_map>
 
 namespace Hollow {
 
@@ -25,12 +24,11 @@ namespace Hollow {
 		static float GetMouseY();
 
 		static void SetNativeWindow(void *window);
-
 		static void Update();
 
 	      private:
-		static std::unordered_map<KeyCode, bool> s_CurrentKeys;
-		static std::unordered_map<KeyCode, bool> s_PreviousKeys;
+		static bool s_CurrentKeys[512];
+		static bool s_PreviousKeys[512];
 	};
 
 } // namespace Hollow
